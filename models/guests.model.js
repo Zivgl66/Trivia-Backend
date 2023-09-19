@@ -2,10 +2,10 @@ const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
 
 /* create user schema */
-const usersSchema = new Schema({
+const guestSchema = new Schema({
   username: { type: String, required: true },
+  password: { type: String },
   profileImage: { type: String, required: true },
-  isAdmin: { type: Boolean, default: false, required: false },
   isManager: { type: Boolean, default: false, required: false },
   numberOfRights: { type: Number, required: false },
   numberOfRightsInARow: { type: Number, required: false },
@@ -13,21 +13,21 @@ const usersSchema = new Schema({
 
 //create collection
 //all the munipulation on the documents will be using this object
-const Users = mongoose.model("Users", usersSchema);
+const Guest = mongoose.model("Guests", guestSchema);
 
 //this function will create new user
 const insertUser = (
   username,
+  password,
   profileImage,
-  isAdmin,
   isManager,
   numberOfRights,
   numberOfRightsInARow
 ) => {
-  const user = new Users({
+  const user = new Guest({
     username,
+    password,
     profileImage,
-    isAdmin,
     isManager,
     numberOfRights,
     numberOfRightsInARow,
@@ -36,24 +36,29 @@ const insertUser = (
 };
 
 // User collection methods:
-const selectUserById = (id) => {
-  return Users.findOne({ _id: id });
-};
-const updateProfileImage = (email, profileImage) => {
-  return Users.updateOne({ email }, { profileImage });
+const selectUserByUsername = (username) => {
+  return Guest.findOne({ username: username });
 };
 
-const selectAllUsers = () => {
-  return Users.find();
+const selectUserById = (id) => {
+  return Guest.findOne({ _id: id });
+};
+const updateProfileImage = (email, profileImage) => {
+  return Guest.updateOne({ email }, { profileImage });
+};
+
+const selectAllGuest = () => {
+  return Guest.find();
 };
 
 const deleteUserById = async (userId) => {
-  return await Users.findByIdAndDelete(userId);
+  return await Guest.findByIdAndDelete(userId);
 };
 
 module.exports = {
   insertUser,
-  selectAllUsers,
+  selectUserByUsername,
+  selectAllGuest,
   deleteUserById,
   selectUserById,
   updateProfileImage,

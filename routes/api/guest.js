@@ -1,10 +1,10 @@
 const express = require("express");
 const router = express.Router();
 const usersValidation = require("../../validation/users.validation");
-const bcrypt = require("../../config/bcrypt");
-const jwt = require("../../config/jwt");
-const adminMiddelaware = require("../../middelware/admin.middelware");
-const usersModule = require("../../models/users.module");
+// const bcrypt = require("../../config/bcrypt");
+// const jwt = require("../../config/jwt");
+// const adminMiddelaware = require("../../middelware/admin.middelware");
+const usersModule = require("../../models/users.model");
 
 router.get("/allusers", async (req, res) => {
   try {
@@ -48,14 +48,15 @@ router.post("/signup", async (req, res) => {
     else {
       const hashedPassword = await bcrypt.createHash(validatedValue.password);
       const newUserData = await usersModule.insertUser(
-        validatedValue.username,
-        validatedValue.name,
+        validatedValue.firstname,
+        validatedValue.lastname,
         validatedValue.email,
         hashedPassword,
+        validatedValue.phone,
         validatedValue.profileImage,
         validatedValue.isAdmin
       );
-      res.json({ status: "ok", message: "user created" });
+      res.json({ status: "ok", msg: "user created" });
     }
   } catch (err) {
     console.log("error sign up: ", err);
@@ -69,29 +70,29 @@ router.post("/login", async (req, res) => {
     const usersData = await usersModule.selectUserByUsername(
       validatedValue.username
     );
-    console.log("user: ", usersData);
-    if (!usersData) {
+    console.log(usersData);
+    if (usersData.length <= 0) {
       res.json({ message: "invalid email or password" }).status(401);
     }
-    const hashRes = await bcrypt.cmpHash(
-      validatedValue.password,
-      usersData.password
-    );
-    if (!hashRes) {
-      res.json({ message: "invalid email or password" }).status(401);
-    }
+    // const hashRes = await bcrypt.cmpHash(
+    //   validatedValue.password,
+    //   usersData[0].password
+    // );
+    // if (!hashRes) {
+    //   res.json({ message: "invalid email or password" }).status(401);
+    // }
     let token = await jwt.generateToken(
       {
-        username: usersData.username,
-        name: usersData.name,
-        id: usersData._id,
-        email: usersData.email,
-        isAdmin: usersData.isAdmin,
-        profileImage: usersData.profileImage,
+        username: usersData[0].username,
+        // name: usersData[0].firstname,
+        // lastname: usersData[0].lastname,
+        id: usersData[0].id,
+        isAdmin: usersData[0].isAdmin,
+        profileImage: usersData[0].profileImage,
       },
       "14d"
     );
-    console.log("token: ", token);
+    console.log(token);
     res.json(token).status(200);
   } catch (err) {
     res.json(err).status(401);

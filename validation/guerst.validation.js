@@ -3,9 +3,6 @@ const Joi = require("joi");
 const usernameRole = {
   username: Joi.string().min(2).max(255).alphanum().trim().required(),
 };
-const nameRole = {
-  name: Joi.string().min(2).max(255).alphanum().trim().required(),
-};
 
 const passwordRole = {
   password: Joi.string()
@@ -20,24 +17,27 @@ const passwordRole = {
 const isAdminRole = {
   isAdmin: Joi.boolean().required(),
 };
-
+const isManagerRole = {
+  isManager: Joi.boolean().required(),
+};
 const profileImageRole = {
   profileImage: Joi.string().trim().min(1).max(16000),
 };
-
-const emailRole = {
-  email: Joi.string().email().min(6).max(255).trim().required(),
+const numberOfRightsRole = {
+  numberOfRights: Joi.number().integer(),
+};
+const numberOfRightsInARowRole = {
+  numberOfRightsInARow: Joi.number().integer(),
 };
 
 const signupSchema = Joi.object({
   ...usernameRole,
-  ...nameRole,
-  ...emailRole,
-  ...passwordRole,
   ...isAdminRole,
   ...profileImageRole,
+  ...isManagerRole,
+  ...numberOfRightsRole,
+  ...numberOfRightsInARowRole,
 });
-
 const loginSchema = Joi.object({
   ...usernameRole,
   ...passwordRole,

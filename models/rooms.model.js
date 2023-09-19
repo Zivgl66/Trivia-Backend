@@ -16,16 +16,6 @@ const Rooms = mongoose.model("Rooms", roomsSchema);
 
 //  Functions:
 
-// const createRoomCode = async () => {
-//   const generatedRoomCode = randomRoomCode(4);
-//   console.log(generatedRoomCode);
-//   const roomData = await Rooms.findOne({ roomCode: generatedRoomCode });
-//   console.log("room data found: ", roomData);
-//   // if (roomData) return createRoomCode();
-//   // else
-//   return generatedRoomCode;
-// };
-
 const createRoomCode = async () => {
   return await getRandomCode(Rooms);
 };
