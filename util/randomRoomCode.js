@@ -7,4 +7,16 @@ const randomRoomCode = (length) => {
     .slice(1)
     .toUpperCase();
 };
-module.exports = randomRoomCode;
+
+// Generate a unique room code
+const getRandomCode = async (rooms) => {
+  let randomCode = "";
+  let found = {};
+  while (found) {
+    randomCode = randomRoomCode(4);
+    found = await rooms.findOne({ roomCode: randomCode });
+  }
+  return randomCode;
+};
+
+module.exports = getRandomCode;

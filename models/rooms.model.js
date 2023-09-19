@@ -1,6 +1,6 @@
 const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
-const randomRoomCode = require("../util/randomRoomCode");
+const getRandomCode = require("../util/randomRoomCode");
 
 /*  Create a Room scheme */
 const roomsSchema = new Schema({
@@ -16,14 +16,18 @@ const Rooms = mongoose.model("Rooms", roomsSchema);
 
 //  Functions:
 
+// const createRoomCode = async () => {
+//   const generatedRoomCode = randomRoomCode(4);
+//   console.log(generatedRoomCode);
+//   const roomData = await Rooms.findOne({ roomCode: generatedRoomCode });
+//   console.log("room data found: ", roomData);
+//   // if (roomData) return createRoomCode();
+//   // else
+//   return generatedRoomCode;
+// };
+
 const createRoomCode = async () => {
-  const generatedRoomCode = randomRoomCode(4);
-  console.log(generatedRoomCode);
-  const roomData = await Rooms.findOne({ roomCode: generatedRoomCode });
-  console.log("room data found: ", roomData);
-  // if (roomData) return createRoomCode();
-  // else
-  return generatedRoomCode;
+  return await getRandomCode(Rooms);
 };
 
 //  Create a new Room:
