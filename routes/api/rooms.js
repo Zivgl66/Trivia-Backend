@@ -1,31 +1,49 @@
 const express = require("express");
 const router = express.Router();
 const roomsModule = require("../../models/rooms.model");
-const roomsValidation = require("../../validation/rooms.validation");
+// const roomsValidation = require("../../validation/rooms.validation");
 
 //  --POST-- Add a New Room
-router.post("/", async (req, res) => {
+// router.post("/", async (req, res) => {
+//   try {
+//     const validatedValue = await roomsValidation.validateRoomSchema(req.body);
+//     const roomData = await roomsModule.findRoomByRoomCode(
+//       validatedValue.roomCode
+//     );
+//     console.log(roomData);
+//     if (roomData) {
+//       res.json({ message: "Room already exists" }).status(401);
+//     } else {
+//       const newRoom = await roomsModule.insertRoom(
+//         validatedValue.roomCode,
+//         validatedValue.isOpen,
+//         validatedValue.isFull,
+//         validatedValue.numberOfPlayers,
+//         validatedValue.users
+//       );
+//       res.json({ status: "success", message: "Room Created" });
+//     }
+//   } catch (err) {
+//     console.error("error creating the room: ", err);
+//     res.json(err);
+//   }
+// });
+
+router.get("/", async (req, res) => {
   try {
-    const validatedValue = await roomsValidation.validateRoomSchema(req.body);
-    const roomData = await roomsModule.findRoomByRoomCode(
-      validatedValue.roomCode
-    );
-    console.log(roomData);
-    if (roomData) {
-      res.json({ message: "Room already exists" }).status(401);
-    } else {
-      const newRoom = await roomsModule.insertRoom(
-        validatedValue.roomCode,
-        validatedValue.isOpen,
-        validatedValue.isFull,
-        validatedValue.numberOfPlayers,
-        validatedValue.users
-      );
-      res.json({ status: "success", message: "Room Created" });
-    }
+    const randomCode = await roomsModule.createRoomCode();
+    const newRoom = {
+      roomCode: randomCode,
+      users: [],
+    };
+    const room = await roomsModule.insertRoom(newRoom.roomCode, newRoom.users);
+    res.json({
+      roomCode: room.roomCode,
+      message: "Room created successfully",
+      status: "success",
+    });
   } catch (err) {
     console.error("error creating the room: ", err);
-    res.json(err);
   }
 });
 

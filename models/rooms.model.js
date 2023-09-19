@@ -1,12 +1,13 @@
 const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
+const randomRoomCode = require("../util/randomRoomCode");
 
 /*  Create a Room scheme */
 const roomsSchema = new Schema({
-  roomCode: { type: Number, required: true },
+  roomCode: { type: String, required: true },
   isOpen: { type: Boolean, default: true },
   isFull: { type: Boolean, default: false },
-  numberOfPlayers: { type: Number, required: true },
+  numberOfPlayers: { type: Number, default: 20 },
   users: { type: Array, required: false, default: [] },
 });
 
@@ -15,25 +16,33 @@ const Rooms = mongoose.model("Rooms", roomsSchema);
 
 //  Functions:
 
+const createRoomCode = async () => {
+  const generatedRoomCode = randomRoomCode(4);
+  console.log(generatedRoomCode);
+  const roomData = await Rooms.findOne({ roomCode: generatedRoomCode });
+  console.log("room data found: ", roomData);
+  // if (roomData) return createRoomCode();
+  // else
+  return generatedRoomCode;
+};
+
 //  Create a new Room:
-const insertRoom = (roomCode, isOpen, numberOfPlayers, users) => {
+const insertRoom = async (roomCode, users) => {
   const room = new Rooms({
     roomCode,
-    isOpen,
-    numberOfPlayers,
     users,
   });
-  return room.save();
+  return await room.save();
 };
 
 //  Find a Room:
-const findRoomById = (id) => {
-  return Rooms.findOne({ _id: id });
+const findRoomById = async (id) => {
+  return await Rooms.findOne({ _id: id });
 };
 
 // Get a Room by room code
-const findRoomByRoomCode = (roomCode) => {
-  return Rooms.findOne({roomCode});
+const findRoomByRoomCode = async (roomCode) => {
+  return await Rooms.findOne({ roomCode });
 };
 
 //  Get all Rooms:
@@ -68,6 +77,7 @@ const addUserToTheRoom = (roomCode, user) => {
 };
 
 module.exports = {
+  createRoomCode,
   findRoomById,
   findRoomByRoomCode,
   getAllRooms,
