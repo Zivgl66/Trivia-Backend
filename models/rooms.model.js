@@ -33,7 +33,7 @@ const findRoomById = (id) => {
 
 // Get a Room by room code
 const findRoomByRoomCode = (roomCode) => {
-  return Rooms.findOne(roomCode);
+  return Rooms.findOne({roomCode});
 };
 
 //  Get all Rooms:
