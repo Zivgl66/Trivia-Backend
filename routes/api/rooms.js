@@ -1,28 +1,30 @@
 const express = require("express");
 const router = express.Router();
 const roomsModule = require("../../models/rooms.model");
+const adminMiddelaware = require("../../middelware/admin.middelware");
 
 // --GET-- request gets all the rooms there are
 router.get("/", async (req, res) => {
   try {
-    const games = await roomsModule.getAllRooms();
+    const rooms = await roomsModule.getAllRooms();
     res.json({
-      games,
+      rooms,
       message: "All Rooms",
       status: "success",
     });
   } catch (err) {
-    console.error("error creating the room: ", err);
+    console.error("error getting all the rooms: ", err);
   }
 });
 
 // --POST-- request crates a new room with the provided host id and game id
 router.post("/", async (req, res) => {
   try {
+    console.log("req" + req.body);
     const randomCode = await roomsModule.createRoomCode();
     const room = {
-      hostId: req.user.id,
-      gameId,
+      hostId: req.body.hostId,
+      gameId: req.body.gameId,
       date: new Date().toISOString(),
       roomCode: randomCode,
       isLive: true,
@@ -74,7 +76,7 @@ router.post("/enterroom", async (req, res) => {
 // --GET-- get a room by its id
 router.get("/:roomId", async (req, res) => {
   try {
-    const roomData = await roomsModule.findRoomById(req.body.roomId);
+    const roomData = await roomsModule.findRoomById(req.params.roomId);
     if (!roomData) res.json({ message: "Room doesnt exists" }).status(401);
     else
       res.json({
@@ -88,7 +90,7 @@ router.get("/:roomId", async (req, res) => {
 });
 
 // --POST-- Delete a room by its id
-router.post("/deleteroom/:roomId", adminMiddelaware, async (req, res) => {
+router.post("/deleteroom/:roomId", async (req, res) => {
   try {
     let deleted = await roomsModule.deleteRoom(req.params.roomId);
     if (deleted)

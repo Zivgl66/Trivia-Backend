@@ -6,10 +6,10 @@ const getRandomCode = require("../util/randomRoomCode");
 const roomsSchema = new Schema({
   hostId: { type: mongoose.Schema.Types.ObjectId, required: true },
   gameId: { type: mongoose.Schema.Types.ObjectId, required: true },
-  roomCode: { type: String, required: true },
+  roomCode: { type: String },
   isLive: { type: Boolean, default: false },
   playersList: [{ type: mongoose.Schema.Types.ObjectId }],
-  date: { type: Date, default: Date.now, required: true },
+  date: { type: Date, default: Date.now },
   platerResultList: [{ type: mongoose.Schema.Types.ObjectId }],
 });
 
@@ -17,7 +17,6 @@ const roomsSchema = new Schema({
 const Rooms = mongoose.model("Rooms", roomsSchema);
 
 //  Functions:
-
 const createRoomCode = async () => {
   return await getRandomCode(Rooms);
 };
@@ -67,13 +66,13 @@ const checkIfRoomIsLive = async (id) => {
 
 //  Add user to the Room: --If room is full, return -1
 const addUserToTheRoom = async (roomCode, userId) => {
-  const room = Rooms.findOne({ roomCode });
+  const room = await Rooms.findOne({ roomCode });
   room.playersList.push(userId);
   return await room.save();
 };
 
 const deleteRoom = async (roomId) => {
-  return await Rooms.findByIdAndDelete(roomId);
+  return await Rooms.findByIdAndDelete({ _id: roomId });
 };
 
 module.exports = {
