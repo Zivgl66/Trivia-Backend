@@ -32,7 +32,6 @@ router.post("/guest", async (req, res) => {
       validatedValue.numberOfRightsInARow
     );
     res.json({ status: "ok", msg: "user created" });
-    // }
   } catch (err) {
     console.log("error sign up: ", err);
     res.json(err);
