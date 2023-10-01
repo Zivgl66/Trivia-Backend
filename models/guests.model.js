@@ -4,7 +4,6 @@ const Schema = mongoose.Schema;
 /* create user schema */
 const guestSchema = new Schema({
   username: { type: String, required: true },
-  password: { type: String },
   profileImage: { type: String, required: true },
   isManager: { type: Boolean, default: false, required: false },
   numberOfRights: { type: Number, required: false },
@@ -16,23 +15,21 @@ const guestSchema = new Schema({
 const Guest = mongoose.model("Guests", guestSchema);
 
 //this function will create new user
-const insertUser = (
+const insertGuest = (
   username,
-  password,
   profileImage,
   isManager,
   numberOfRights,
   numberOfRightsInARow
 ) => {
-  const user = new Guest({
+  const guest = new Guest({
     username,
-    password,
     profileImage,
     isManager,
     numberOfRights,
     numberOfRightsInARow,
   });
-  return user.save();
+  return guest.save();
 };
 
 // User collection methods:
@@ -56,7 +53,7 @@ const deleteUserById = async (userId) => {
 };
 
 module.exports = {
-  insertUser,
+  insertGuest,
   selectUserByUsername,
   selectAllGuest,
   deleteUserById,

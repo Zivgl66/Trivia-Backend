@@ -98,42 +98,44 @@ router.post("/login", async (req, res) => {
   }
 });
 
-// router.post("/loginbytoken", async (req, res) => {
-//   try {
-//     if (req.body.token) {
-//       let dataFromToken = await jwt.verifyToken(req.body.token);
-//       console.log(dataFromToken);
-//       const usersData = await usersModule.selectUserByEmail(
-//         dataFromToken.email
-//       );
-//       if (usersData.length <= 0) {
-//         res.json({ message: "no user found" }).status(401);
-//       }
-//       res.status(200);
-//     } else {
-//       res.json({ message: "no token provided" }).status(401);
-//     }
-//   } catch (err) {
-//     console.log(err);
-//     res.json(err);
-//   }
-// });
+router.post("/loginbytoken", async (req, res) => {
+  try {
+    if (req.body.token) {
+      let dataFromToken = await jwt.verifyToken(req.body.token);
+      console.log(dataFromToken);
+      const usersData = await usersModule.selectUserByEmail(
+        dataFromToken.email
+      );
+      if (usersData.length <= 0) {
+        res.json({ message: "no user found" }).status(401);
+      }
+      res.status(200);
+    } else {
+      res.json({ message: "no token provided" }).status(401);
+    }
+  } catch (err) {
+    console.log(err);
+    res.json(err);
+  }
+});
 
-// router.post("/deleteuser/:id", adminMiddelaware, async (req, res) => {
-//   try {
-//     console.log(req.params.id);
-//     let deleted = await usersModule.deleteUserById(req.params.id);
-//     console.log(deleted);
-//     if (deleted) {
-//       res.json({ message: "deleted the user from DB" }).status(202);
-//     } else {
-//       res.json({ message: "user not found!" }).status(304);
-//     }
-//   } catch (err) {
-//     console.log(err);
-//     res.json(err).status(401);
-//   }
-// });
+router.post("/deleteuser/:id", adminMiddelaware, async (req, res) => {
+  try {
+    console.log(req.params.id);
+    let deleted = await usersModule.deleteUserById(req.params.id);
+    console.log(deleted);
+    if (deleted) {
+      res
+        .json({ message: `deleted the user, ${deleted.username} from DB` })
+        .status(202);
+    } else {
+      res.json({ message: "user not found!" }).status(304);
+    }
+  } catch (err) {
+    console.log(err);
+    res.json(err).status(401);
+  }
+});
 
 // router.post("/forgotpassword", async (req, res) => {
 //   try {

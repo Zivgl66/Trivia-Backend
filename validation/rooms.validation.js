@@ -16,6 +16,10 @@ const numberOfPlayersRole = {
   numberOfPlayers: Joi.number().integer().required(),
 };
 
+const gameIdRole = {
+  gameId: Joi.number().integer().required(),
+};
+
 const usersRole = {
   users: Joi.array().length(0),
 };
@@ -23,6 +27,7 @@ const usersRole = {
 const roomSchema = Joi.object({
   ...roomCodeRole,
   ...isOpenRole,
+  ...gameIdRole,
   ...isFullRole,
   ...numberOfPlayersRole,
   ...usersRole,

@@ -1,32 +1,15 @@
 const express = require("express");
 const router = express.Router();
-const usersValidation = require("../../validation/users.validation");
-// const bcrypt = require("../../config/bcrypt");
-// const jwt = require("../../config/jwt");
-// const adminMiddelaware = require("../../middelware/admin.middelware");
-const usersModule = require("../../models/users.model");
+const guestValidation = require("../../validation/guests.validation");
+const guestsModule = require("../../models/guests.model");
 
-router.get("/allusers", async (req, res) => {
+router.post("/", async (req, res) => {
   try {
-    const usersData = await usersModule.selectAllUsers();
-    console.log(usersData);
-    if (usersData.length > 0) res.json(usersData).status(200);
-    else {
-      res.json({ message: "No users found" }).status(401);
-    }
-  } catch (err) {
-    console.log("error getting all users: ", err);
-  }
-});
-
-router.post("/guest", async (req, res) => {
-  try {
-    const validatedValue = await usersValidation.validateSignupSchema(req.body);
+    const validatedValue = await guestValidation.validateSignupSchema(req.body);
     console.log(validatedValue);
-    const newUserData = await usersModule.insertUser(
+    const newGuestData = await guestsModule.insertGuest(
       validatedValue.username,
       validatedValue.profileImage,
-      validatedValue.isAdmin,
       validatedValue.isManager,
       validatedValue.numberOfRights,
       validatedValue.numberOfRightsInARow

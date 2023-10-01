@@ -4,11 +4,13 @@ const getRandomCode = require("../util/randomRoomCode");
 
 /*  Create a Room scheme */
 const roomsSchema = new Schema({
+  hostId: { type: mongoose.Schema.Types.ObjectId, required: true },
+  gameId: { type: mongoose.Schema.Types.ObjectId, required: true },
   roomCode: { type: String, required: true },
-  isOpen: { type: Boolean, default: true },
-  isFull: { type: Boolean, default: false },
-  numberOfPlayers: { type: Number, default: 20 },
-  users: { type: Array, required: false, default: [] },
+  isLive: { type: Boolean, default: false },
+  playersList: [{ type: mongoose.Schema.Types.ObjectId }],
+  date: { type: Date, default: Date.now, required: true },
+  platerResultList: [{ type: mongoose.Schema.Types.ObjectId }],
 });
 
 // create a Collection of Rooms
@@ -21,10 +23,23 @@ const createRoomCode = async () => {
 };
 
 //  Create a new Room:
-const insertRoom = async (roomCode, users) => {
+const insertRoom = async (
+  hostId,
+  gameId,
+  date,
+  roomCode,
+  isLive,
+  playersList,
+  playerResultList
+) => {
   const room = new Rooms({
+    hostId,
+    gameId,
+    date,
     roomCode,
-    users,
+    isLive,
+    playersList,
+    playerResultList,
   });
   return await room.save();
 };
@@ -40,34 +55,25 @@ const findRoomByRoomCode = async (roomCode) => {
 };
 
 //  Get all Rooms:
-const getAllRooms = () => {
-  return Rooms.find();
+const getAllRooms = async () => {
+  return await Rooms.find();
 };
 
 //  Check if a Room is open by id:
-const checkIfRoomIsOpen = (id) => {
-  const room = Rooms.findOne({ _id: id });
-  return room.isOpen;
-};
-
-//  Check if Room is full or not and return 0 if full or *Number* of free spots available -- return -1 if room is closed
-const checkIfRoomIsFull = (id) => {
-  const room = Rooms.findOne({ _id: id });
-  if (room.isOpen) {
-    let sum = users.length - numberOfPlayers;
-    if (sum > 0) return sum;
-    else return 0;
-  } else return -1;
+const checkIfRoomIsLive = async (id) => {
+  const room = await Rooms.findOne({ _id: id });
+  return room.isLive;
 };
 
 //  Add user to the Room: --If room is full, return -1
-const addUserToTheRoom = (roomCode, user) => {
-  const room = Rooms.findOne(roomCode);
-  if (room.isFull) return -1;
-  else {
-    room.users.push(user);
-    room.numberOfPlayers++;
-  }
+const addUserToTheRoom = async (roomCode, userId) => {
+  const room = Rooms.findOne({ roomCode });
+  room.playersList.push(userId);
+  return await room.save();
+};
+
+const deleteRoom = async (roomId) => {
+  return await Rooms.findByIdAndDelete(roomId);
 };
 
 module.exports = {
@@ -76,7 +82,7 @@ module.exports = {
   findRoomByRoomCode,
   getAllRooms,
   insertRoom,
-  checkIfRoomIsOpen,
-  checkIfRoomIsFull,
+  checkIfRoomIsLive,
   addUserToTheRoom,
+  deleteRoom,
 };
