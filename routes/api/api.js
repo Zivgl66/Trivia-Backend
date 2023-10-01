@@ -14,7 +14,7 @@ router.use("/guests", guestsRouter);
 //http://localhost:3001/api/rooms
 router.use("/rooms", roomsRouter);
 
-//http://localhost:3001/api/rooms
+//http://localhost:3001/api/games
 router.use("/games", gamesRouter);
 
 module.exports = router;
