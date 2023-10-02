@@ -21,16 +21,16 @@ const gamesSchema = new Schema({
         enum: ["True/False", "FreeText", "FourOptions"],
         required: true,
       },
-      pointType: {
-        type: String,
-        enum: ["Standard", "Double", "BasedOnTime"],
-        required: true,
-      },
-      answerTime: {
-        type: Number,
-        min: 5,
-        max: 90,
-      },
+      // pointType: {
+      //   type: String,
+      //   enum: ["Standard", "Double", "BasedOnTime"],
+      //   required: true,
+      // },
+      // answerTime: {
+      //   type: Number,
+      //   min: 5,
+      //   max: 90,
+      // },
       backgroundImage: { type: String, required: false },
       video: { type: String, required: false },
       question: {
