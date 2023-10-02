@@ -46,3 +46,25 @@ const LeaderBoard = mongoose.model("LeaderBoard", leaderBoardSchema);
 //FUNCTIONS:
 
 
+//create a new leaderboard
+const createLeaderBoard = async (roomId, platerResultList) => {
+  let room = await Rooms.findRoomById(roomId);
+  let game = await Games.getGameById(room.gameId);
+  const leaderBoard = new LeaderBoard({
+    roomId,
+    platerResultList,
+  });
+
+  game.questionList.forEach((question) => {
+    leaderBoard.questionLeaderboard.push({
+      questionIndex: question.questionIndex,
+      questionResultList: [],
+    });
+    leaderBoard.currentLeaderboard.push({
+      questionIndex: question.questionIndex,
+      leaderboardList: [],
+    });
+  });
+  return leaderBoard.save();
+};
+
