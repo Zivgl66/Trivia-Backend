@@ -73,3 +73,46 @@ router.post("/:id", async (req, res) => {
     res.json(err).status(401);
   }
 });
+
+//--GET-- get  all answers of a player result
+router.get("/:id/answers", async (req, res) => {
+  try {
+    const playerResultAnswers = await playerResultsModule.getAnswers(
+      req.params.id
+    );
+    if (!playerResultAnswers)
+      res.json({ message: "player result answers not found!" }).status(304);
+    else
+      res.json({
+        status: "success",
+        message: "Player result answers",
+        answers: playerResultAnswers,
+      });
+  } catch (err) {
+    console.error("error getting questions of a players result: ", err);
+    res.json(err).status(401);
+  }
+});
+
+//--POST-- add  an answer to a player result
+router.post("/:id/answers", async (req, res) => {
+  try {
+    const newPlayerResult = await playerResultsModule.addAnswer(
+      req.params.id,
+      req.body.newAnswer
+    );
+    if (!newPlayerResult)
+      res
+        .json({ message: "new answer was not added to the player result!" })
+        .status(304);
+    else
+      res.json({
+        status: "success",
+        message: "new question added",
+        playerResult: newPlayerResult,
+      });
+  } catch (err) {
+    console.error("error adding question to a players result: ", err);
+    res.json(err).status(401);
+  }
+});
