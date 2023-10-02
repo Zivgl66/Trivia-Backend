@@ -133,7 +133,7 @@ router.post("/question/", async (req, res) => {
       res.json({
         status: "success",
         game: newGame,
-        message: "game questions were updated",
+        message: "game questions were",
       });
   } catch (err) {
     console.error("error: " + err);
