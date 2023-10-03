@@ -19,24 +19,24 @@ router.get("/allusers", async (req, res) => {
   }
 });
 
-router.post("/guest", async (req, res) => {
-  try {
-    const validatedValue = await usersValidation.validateSignupSchema(req.body);
-    console.log(validatedValue);
-    const newUserData = await usersModule.insertUser(
-      validatedValue.username,
-      validatedValue.profileImage,
-      validatedValue.isAdmin,
-      validatedValue.isManager,
-      validatedValue.numberOfRights,
-      validatedValue.numberOfRightsInARow
-    );
-    res.json({ status: "ok", msg: "user created" });
-  } catch (err) {
-    console.log("error sign up: ", err);
-    res.json(err);
-  }
-});
+// router.post("/guest", async (req, res) => {
+//   try {
+//     const validatedValue = await usersValidation.validateSignupSchema(req.body);
+//     console.log(validatedValue);
+//     const newUserData = await usersModule.insertUser(
+//       validatedValue.username,
+//       validatedValue.profileImage,
+//       validatedValue.isAdmin,
+//       validatedValue.isManager,
+//       validatedValue.numberOfRights,
+//       validatedValue.numberOfRightsInARow
+//     );
+//     res.json({ status: "ok", msg: "user created" });
+//   } catch (err) {
+//     console.log("error sign up: ", err);
+//     res.json(err);
+//   }
+// });
 
 router.post("/signup", async (req, res) => {
   try {
@@ -91,7 +91,10 @@ router.post("/login", async (req, res) => {
       "14d"
     );
     console.log("token: ", token);
-    res.json(token).status(200);
+    res.json({
+      token: token,
+      message: "success",
+    });
   } catch (err) {
     res.json(err).status(401);
   }
