@@ -8,7 +8,13 @@ const roomsSchema = new Schema({
   gameId: { type: mongoose.Schema.Types.ObjectId, required: true },
   roomCode: { type: String },
   isLive: { type: Boolean, default: false },
-  playersList: [{ type: mongoose.Schema.Types.ObjectId }],
+  playersList: [
+    {
+      guestId: { type: mongoose.Schema.Types.ObjectId },
+      guestName: { type: String },
+      guestPicture: { type: String },
+    },
+  ],
   date: { type: Date, default: Date.now },
   platerResultList: [{ type: mongoose.Schema.Types.ObjectId }],
 });
@@ -68,6 +74,7 @@ const checkIfRoomIsLive = async (id) => {
 const addUserToTheRoom = async (roomCode, userId) => {
   const room = await Rooms.findOne({ roomCode });
   room.playersList.push(userId);
+  console.log(room);
   return await room.save();
 };
 

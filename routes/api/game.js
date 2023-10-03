@@ -19,15 +19,16 @@ router.get("/", async (req, res) => {
 // --POST-- create a new game
 router.post("/", async (req, res) => {
   try {
-    console.log(req.body);
-    const newGame = await gamesModule.createGame({
-      name: req.body.name,
-      description: req.body.description,
-      backgroundImage: req.body.backgroundImage,
-      creatorId: req.body.creatorId,
-      creatorName: req.body.creatorName,
-      questionList: req.body.questionList,
-    });
+    let numberOfQuestions = req.body.questionList.length;
+    const newGame = await gamesModule.createGame(
+      req.body.name,
+      req.body.description,
+      req.body.backgroundImage,
+      req.body.creatorId,
+      req.body.creatorName,
+      req.body.questionList,
+      numberOfQuestions
+    );
     res.json({
       game: newGame,
       message: "New Game Created",

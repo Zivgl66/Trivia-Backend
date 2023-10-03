@@ -58,14 +58,17 @@ router.post("/enterroom", async (req, res) => {
     if (!roomData) {
       res.json({ message: "Room doesnt exists" }).status(401);
     } else {
+      let spotOfPlayer = roomData.playersList.length;
       const room = await roomsModule.addUserToTheRoom(
         roomData.roomCode,
-        req.body.userId
+        req.body
       );
+      console.log("added user" + room);
       res.json({
         status: "success",
         message: `${req.body.userId} Enterd Room`,
         room: room,
+        userId: room.playersList[spotOfPlayer]._id,
       });
     }
   } catch (err) {

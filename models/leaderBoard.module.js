@@ -45,7 +45,6 @@ const LeaderBoard = mongoose.model("LeaderBoard", leaderBoardSchema);
 
 //FUNCTIONS:
 
-
 //create a new leaderboard
 const createLeaderBoard = async (roomId, platerResultList) => {
   let room = await Rooms.findRoomById(roomId);
@@ -67,4 +66,3 @@ const createLeaderBoard = async (roomId, platerResultList) => {
   });
   return leaderBoard.save();
 };
-

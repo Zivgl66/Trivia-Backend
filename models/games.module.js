@@ -18,7 +18,7 @@ const gamesSchema = new Schema({
     {
       questionType: {
         type: String,
-        enum: ["True/False", "FreeText", "FourOptions"],
+        enum: ["Options", "FreeText"],
         required: true,
       },
       // pointType: {
@@ -62,16 +62,18 @@ const createGame = async (
   backgroundImage,
   creatorId,
   creatorName,
-  questionList
+  questionList,
+  numberOfQuestions
 ) => {
+  console.log("question list: " + name);
   const game = new Games({
     name,
     description,
     backgroundImage,
     creatorId,
     creatorName,
-    numberOfQuestions: questionList.length,
     questionList,
+    numberOfQuestions,
     dateCreated: new Date().toISOString(),
   });
   return await game.save();
