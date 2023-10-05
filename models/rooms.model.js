@@ -73,9 +73,36 @@ const checkIfRoomIsLive = async (id) => {
 //  Add user to the Room: --If room is full, return -1
 const addUserToTheRoom = async (roomCode, userId) => {
   const room = await Rooms.findOne({ roomCode });
-  room.playersList.push(userId);
+  room.playersList.push({ guestName: "", guestPicture: "" });
   console.log(room);
   return await room.save();
+};
+
+const updateUserList = async (id, newUser) => {
+  await Rooms.findOneAndUpdate(
+    { _id: id },
+    { $set: { "playersList.$[el].guestName": newUser.guestName } },
+    {
+      arrayFilters: [
+        {
+          "el.guestName": "",
+        },
+      ],
+      new: true,
+    }
+  );
+  return await Rooms.findOneAndUpdate(
+    { _id: id },
+    { $set: { "playersList.$[el].guestPicture": newUser.guestPicture } },
+    {
+      arrayFilters: [
+        {
+          "el.guestPicture": "",
+        },
+      ],
+      new: true,
+    }
+  );
 };
 
 const deleteRoom = async (roomId) => {
@@ -91,4 +118,5 @@ module.exports = {
   checkIfRoomIsLive,
   addUserToTheRoom,
   deleteRoom,
+  updateUserList,
 };

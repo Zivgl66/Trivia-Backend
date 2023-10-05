@@ -66,9 +66,30 @@ router.post("/enterroom", async (req, res) => {
       console.log("added user" + room);
       res.json({
         status: "success",
-        message: `${req.body.userId} Enterd Room`,
+        message: `guest has Enterd Room`,
         room: room,
-        userId: room.playersList[spotOfPlayer]._id,
+        guestId: room.playersList[spotOfPlayer]._id,
+      });
+    }
+  } catch (err) {
+    console.error("error: " + err);
+  }
+});
+
+router.post("/addplayer", async (req, res) => {
+  try {
+    const roomData = await roomsModule.findRoomByRoomCode(req.body.roomCode);
+    if (!roomData) {
+      res.json({ message: "Room doesnt exists" }).status(401);
+    } else {
+      const updateUser = await roomsModule.updateUserList(
+        roomData._id,
+        req.body.newGuest
+      );
+      res.json({
+        status: "success",
+        message: `${req.body.newGuest.guestName} has Enterd Room`,
+        room: roomData,
       });
     }
   } catch (err) {

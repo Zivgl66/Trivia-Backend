@@ -21,6 +21,10 @@ const gamesSchema = new Schema({
         enum: ["Options", "FreeText"],
         required: true,
       },
+      isManagerFirst: {
+        type: Boolean,
+        required: true,
+      },
       // pointType: {
       //   type: String,
       //   enum: ["Standard", "Double", "BasedOnTime"],

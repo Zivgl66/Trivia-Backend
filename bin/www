@@ -9,7 +9,19 @@ const debug = require("debug")("nodejs-project:server");
 const http = require("http");
 const chalk = require("chalk");
 const connectToDb = require("./connectToDB");
+// let socketapi = require("../socketServer");
 let server;
+let room;
+let leaderboard;
+let players = [];
+
+const addPlayer = (guestName, socketId) => {
+  !players.some((player) => player.socketId === socketId) &&
+    players.push({ guestName, socketId });
+};
+const getPlayer = (socketId) => {
+  return players.find((player) => player.socketId === socketId);
+};
 /**
  * Get port from environment and store in Express.
  */
@@ -20,6 +32,53 @@ connectToDb
   .then(() => {
     console.log(chalk.blueBright("connected to db"));
     server = http.createServer(app);
+    const io = require("socket.io")(server, {
+      cors: {
+        origin: "*",
+        methods: ["GET", "POST"],
+        Credentials: false,
+        allowedHeaders: ["*"],
+      },
+    });
+    io.on("connection", async (socket) => {
+      console.log("SOCKET SERVER CONNECTION");
+
+      socket.on("disconnect", (reason) => {
+        console.log("Socket " + socket.id + " was disconnected");
+        console.log(reason);
+      });
+
+      socket.on("init-game", (data) => {
+        console.log("init game!!");
+        room = JSON.parse(JSON.stringify(data.room));
+        console.log("room: " + room);
+        // leaderboard = JSON.parse(JSON.stringify(newLeaderboard));
+        socket.join(room.roomCode);
+        hostId = socket.id;
+        console.log(
+          "Host with id " +
+            socket.id +
+            " started game and joined room: " +
+            room.roomCode
+        );
+      });
+
+      socket.on("add-player", ({ user, socketId }) => {
+        addPlayer(user.guestName, socketId);
+        // cb("correct", user._id, room._id);
+        socket.join(room.roomCode);
+        console.log(
+          "player " +
+            user.guestName +
+            " with id " +
+            socket.id +
+            " joined room " +
+            room.roomCode
+        );
+        let player = getPlayer(socketId);
+        io.emit("player-added", player);
+      });
+    });
     server.listen(port);
     server.on("error", onError);
     server.on("listening", onListening);
