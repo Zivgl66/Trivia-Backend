@@ -110,6 +110,7 @@ const deleteRoom = async (roomId) => {
 };
 
 module.exports = {
+  Rooms,
   createRoomCode,
   findRoomById,
   findRoomByRoomCode,

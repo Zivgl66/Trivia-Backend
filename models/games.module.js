@@ -145,6 +145,7 @@ const updateQuestions = async (gameId, newQuestionList) => {
 };
 
 module.exports = {
+  Games,
   createGame,
   getAllGames,
   getUserGames,

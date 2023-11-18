@@ -1,11 +1,13 @@
 const express = require("express");
 const router = express.Router();
 const playerResultsModule = require("../../models/playerResult.module");
+const roomsModule = require("../../models/rooms.model");
+const gamesModule = require("../../models/games.module");
 
 // --GET-- get a players results
 router.get("/", async (req, res) => {
   try {
-    const playerResults = await playerResultsModule.getAllPlayerResults();
+    const playerResults = await playerResultsModule.getAllPlayersResults();
     res.json({
       playerResults,
       message: "All Player Results",
@@ -20,19 +22,20 @@ router.get("/", async (req, res) => {
 // --POST-- create a new player result
 router.post("/", async (req, res) => {
   try {
-    const newPlayerResult = await playerResultsModule.createPlayerResult({
-      playerId: req.body.playerId,
-      roomId: req.body.roomId,
-      score: req.body.score,
-      answers: req.body.answers,
-    });
+    console.log("api:   " + JSON.stringify(req.body));
+    const newPlayerResultN = await playerResultsModule.createPlayerResult(
+      req.body.newPlayerResult.playerId,
+      req.body.newPlayerResult.roomId,
+      req.body.newPlayerResult.score,
+      req.body.newPlayerResult.answers
+    );
     res.json({
-      playerResult: newPlayerResult,
+      playerResult: newPlayerResultN,
       message: "New player result created",
       status: "success",
     });
   } catch (err) {
-    console.error("error getting all the players results: ", err);
+    console.error("error creating players results: ", err);
     res.json(err).status(401);
   }
 });
@@ -40,16 +43,17 @@ router.post("/", async (req, res) => {
 //--GET-- get a player result by id
 router.get("/:id", async (req, res) => {
   try {
-    const playerResult = await playerResultsModule.getPlayerResultById(
+    const playerResultFound = await playerResultsModule.getPlayerResultById(
       req.params.id
     );
-    if (!playerResult)
+    console.log("player result found: " + playerResultFound);
+    if (!playerResultFound)
       res.json({ message: "player result not found" }).status(401);
     else
       res.json({
         status: "success",
         message: "Player results Found",
-        playerResult,
+        playerResult: playerResultFound,
       });
   } catch (err) {
     console.error("error getting the players results: ", err);
@@ -95,12 +99,48 @@ router.get("/:playerResultId/answers", async (req, res) => {
 });
 
 //--POST-- add  an answer to a player result
+// router.post("/:playerResultId/answers", async (req, res) => {
+//   try {
+//     const newPlayerResult = await playerResultsModule.addAnswer(
+//       req.params.playerResultId,
+//       req.body.newAnswer
+//     );
+//     if (!newPlayerResult)
+//       res
+//         .json({ message: "new answer was not added to the player result!" })
+//         .status(304);
+//     else
+//       res.json({
+//         status: "success",
+//         message: "new question added",
+//         playerResult: newPlayerResult,
+//       });
+//   } catch (err) {
+//     console.error("error adding question to a players result: ", err);
+//     res.json(err).status(401);
+//   }
+// });
+
 router.post("/:playerResultId/answers", async (req, res) => {
   try {
+    const playerResultData = await playerResultsModule.getPlayerResult(
+      req.params.playerResultId
+    );
+    // console.log("player result found:" + JSON.stringify(playerResultData));
+    // console.log("player result found:" + playerResultData[0].id);
+    // console.log("player result found:" + playerResultData[0]._id);
+    // console.log("player result found:" + playerResultData[0].roomId);
+    // console.log("player result found:" + playerResultData);
+    const roomData = await roomsModule.findRoomById(playerResultData[0].roomId);
+    // console.log("room found:" + roomData);
+    const gameData = await gamesModule.getGameById(roomData.gameId);
+    // console.log("game found:" + gameData);
     const newPlayerResult = await playerResultsModule.addAnswer(
-      req.params.playerResultId,
+      playerResultData[0],
+      gameData,
       req.body.newAnswer
     );
+    // console.log("updated player result : " + newPlayerResult);
     if (!newPlayerResult)
       res
         .json({ message: "new answer was not added to the player result!" })
@@ -139,3 +179,5 @@ router.get("/:playerResultId/answers/:answerId", async (req, res) => {
     res.json(err).status(401);
   }
 });
+
+module.exports = router;

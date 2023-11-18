@@ -90,8 +90,34 @@ connectToDb
       socket.on("start-game", (game) => {
         game = JSON.parse(JSON.stringify(game));
         console.log("Move players to game");
-        console.log(room.roomCode);
         socket.to(room.roomCode).emit("move-to-game-page", room._id);
+      });
+      socket.on("question-preview", (cb) => {
+        cb();
+        socket.to(room.roomCode).emit("host-start-preview");
+      });
+
+      socket.on("question-preview", (cb) => {
+        cb();
+        socket.to(room.roomCode).emit("host-start-preview");
+      });
+
+      socket.on("start-question-timer", (time, question, cb) => {
+        console.log(question);
+        console.log(
+          "Send question " + question.questionIndex + " data to players"
+        );
+        socket
+          .to(room.roomCode)
+          .emit("host-start-question-timer", time, question);
+        cb();
+      });
+
+      socket.on("send-answer-to-host", (data, score) => {
+        let player = getPlayer(socket.id);
+        socket
+          .to(room.roomCode)
+          .emit("get-answer-from-player", data, leaderboard._id, score, player);
       });
     });
 

@@ -1,25 +1,21 @@
 const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
-const Rooms = require("./rooms.model");
-const Games = require("./game.module");
+// const { Rooms } = require("./rooms.model");
+// const { Games } = require("./games.module");
+const { getGameById } = require("./games.module");
+const { findRoomById } = require("./rooms.model");
 
 const playerResultSchema = new Schema({
-  playerId: {
-    type: mongoose.Schema.Types.ObjectId,
-  },
-  roomId: {
-    type: mongoose.Schema.Types.ObjectId,
-  },
+  playerId: { type: mongoose.Schema.Types.ObjectId, required: true },
+  roomId: { type: mongoose.Schema.Types.ObjectId, required: true },
   score: {
-    Number,
+    type: Number,
+    default: 0,
   },
   answers: [
     {
       questionIndex: { type: Number },
-      answered: {
-        type: Boolean,
-        default: false,
-      },
+      correctAnswers: [{ type: String }],
       answers: [{ type: String }],
       points: {
         type: Number,
@@ -31,8 +27,7 @@ const playerResultSchema = new Schema({
 
 // create a Collection of Rooms
 const PlayerResults = mongoose.model("PlayerResults", playerResultSchema);
-
-//  Functions:
+// PlayerResults.set("toObject", { getters: true });
 
 // create a new player result in the db
 const createPlayerResult = async (playerId, roomId, score, answers) => {
@@ -50,6 +45,9 @@ const getPlayerResultById = async (playerId) => {
   return await PlayerResults.find({ playerId });
 };
 
+const getPlayerResult = async (id) => {
+  return await PlayerResults.find({ _id: id }).lean();
+};
 //get all players results
 const getAllPlayersResults = async () => {
   return await PlayerResults.find();
@@ -64,11 +62,53 @@ const deletePlayersResults = async (id) => {
 // const updatePlayersResult = async (id, newResult) => {};
 
 //add answer
-const addAnswer = async (playerResultId, newAnswer) => {
+// const addAnswer = async (playerResultId, newAnswer) => {
+//   let points = 0;
+//   let {
+//     questionIndex,
+//     // answered,
+//     answers,
+//     time,
+//   } = newAnswer;
+//   let playerResult = await PlayerResults.find({ _id: playerResultId });
+//   console.log("result: " + playerResult);
+
+//   // const game = await Games.findOne({ _id: room.gameId });
+//   // const room = await Rooms.findOne({ _id: playerResult.roomId });
+//   console.log("room id: " + playerResult.get("roomId"));
+//   let room = await findRoomById(playerResult.roomId);
+//   console.log("room found: " + room);
+//   let game = await getGameById(room.gameId);
+//   console.log("game found: " + game);
+//   let correctAnswers = game.questionList[questionIndex - 1].answerList
+//     .filter((answer) => answer.isCorrect === true)
+//     .map((answer) => answer.name);
+//   let sortedAnswers = newAnswer.answers.sort();
+//   if (answers.length > 0) {
+//     let a = 0;
+//     for (let i = 0; i < correctAnswers.length; i++) {
+//       if (correctAnswers[i] === sortedAnswers[i]) a++;
+//     }
+//     if (a === correctAnswers.length) points++;
+//     playerResult.score += points;
+//     playerResult.answers.push({
+//       questionIndex,
+//       answers,
+//       correctAnswers,
+//       points,
+//     });
+//     return await playerResult.save();
+//   }
+// };
+
+const addAnswer = async (playerResult, game, newAnswer) => {
   let points = 0;
-  const playerResult = await PlayerResults.find({ _id: playerResultId });
-  const room = await Rooms.find({ _id: playerResult.roomId });
-  const game = await Games.find({ _id: room.gameId });
+  let {
+    questionIndex,
+    // answered,
+    answers,
+    time,
+  } = newAnswer;
   let correctAnswers = game.questionList[questionIndex - 1].answerList
     .filter((answer) => answer.isCorrect === true)
     .map((answer) => answer.name);
@@ -86,7 +126,13 @@ const addAnswer = async (playerResultId, newAnswer) => {
       correctAnswers,
       points,
     });
-    return await playerResult.save();
+    console.log("end reuslt" + JSON.stringify(playerResult));
+    // return await playerResult.save(function (err) {
+    //   console.log(err);
+    // });
+    return PlayerResults.findByIdAndUpdate(playerResult._id, playerResult, {
+      new: true,
+    });
   }
 };
 
@@ -123,6 +169,7 @@ const deleteAnswer = async (playerResultId, answerId) => {
 module.exports = {
   createPlayerResult,
   getPlayerResultById,
+  getPlayerResult,
   getAllPlayersResults,
   deletePlayersResults,
   addAnswer,

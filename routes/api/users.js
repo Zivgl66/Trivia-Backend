@@ -64,37 +64,42 @@ router.post("/signup", async (req, res) => {
 router.post("/login", async (req, res) => {
   try {
     const validatedValue = await usersValidation.validateLoginSchema(req.body);
-    console.log(validatedValue);
+    console.log("validate value: " + validatedValue);
     const usersData = await usersModule.selectUserByUsername(
       validatedValue.username
     );
     console.log("user: ", usersData);
     if (!usersData) {
       res.json({ message: "invalid email or password" }).status(401);
+    } else {
+      const hashRes = await bcrypt.cmpHash(
+        validatedValue.password,
+        usersData.password
+      );
+      if (!hashRes) {
+        console.log("error invalid password");
+        res.json({ message: "invalid email or password" }).status(401);
+      } else {
+        let token = await jwt.generateToken(
+          {
+            username: usersData.username,
+            name: usersData.name,
+            id: usersData._id,
+            email: usersData.email,
+            isAdmin: usersData.isAdmin,
+            profileImage: usersData.profileImage,
+          },
+          "14d"
+        );
+        console.log("token: ", token);
+        res
+          .json({
+            token: token,
+            message: "success",
+          })
+          .status(200);
+      }
     }
-    const hashRes = await bcrypt.cmpHash(
-      validatedValue.password,
-      usersData.password
-    );
-    if (!hashRes) {
-      res.json({ message: "invalid email or password" }).status(401);
-    }
-    let token = await jwt.generateToken(
-      {
-        username: usersData.username,
-        name: usersData.name,
-        id: usersData._id,
-        email: usersData.email,
-        isAdmin: usersData.isAdmin,
-        profileImage: usersData.profileImage,
-      },
-      "14d"
-    );
-    console.log("token: ", token);
-    res.json({
-      token: token,
-      message: "success",
-    });
   } catch (err) {
     res.json(err).status(401);
   }
