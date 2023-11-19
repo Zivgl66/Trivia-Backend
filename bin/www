@@ -54,9 +54,10 @@ connectToDb
       });
 
       // start a game with host
-      socket.on("init-game", (data) => {
+      socket.on("init-game", (newRoom, newLeaderboard) => {
         console.log("init game!!");
-        room = JSON.parse(JSON.stringify(data.room));
+        room = JSON.parse(JSON.stringify(newRoom));
+        leaderboard = JSON.parse(JSON.stringify(newLeaderboard));
         console.log("room: " + room);
         // leaderboard = JSON.parse(JSON.stringify(newLeaderboard));
         socket.join(room.roomCode);

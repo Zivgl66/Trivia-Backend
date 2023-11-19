@@ -5,6 +5,7 @@ const roomsRouter = require("./rooms");
 const guestsRouter = require("./guest");
 const gamesRouter = require("./game");
 const playerResultsRouter = require("./playerResult");
+const leaderBoardRouter = require("./leaderboard");
 
 //http://localhost:3001/api/users
 router.use("/users", usersRouter);
@@ -20,5 +21,8 @@ router.use("/games", gamesRouter);
 
 //http://localhost:3001/api/playerresults
 router.use("/playerresults", playerResultsRouter);
+
+//http://localhost:3001/api/leaderboards
+router.use("/leaderboards", leaderBoardRouter);
 
 module.exports = router;

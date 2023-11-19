@@ -1,10 +1,8 @@
 const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
-const Rooms = require("./rooms.model");
-const Games = require("./game.module");
 
 const leaderBoardSchema = new Schema({
-  gameId: {
+  roomId: {
     type: mongoose.Schema.Types.ObjectId,
   },
   playerResultList: [
@@ -46,15 +44,13 @@ const LeaderBoard = mongoose.model("LeaderBoard", leaderBoardSchema);
 //FUNCTIONS:
 
 //create a new leaderboard
-const createLeaderBoard = async (roomId, platerResultList) => {
-  let room = await Rooms.findRoomById(roomId);
-  let game = await Games.getGameById(room.gameId);
+const createLeaderBoard = async (roomId, gameData, platerResultList) => {
   const leaderBoard = new LeaderBoard({
     roomId,
     platerResultList,
   });
 
-  game.questionList.forEach((question) => {
+  gameData.questionList.forEach((question) => {
     leaderBoard.questionLeaderboard.push({
       questionIndex: question.questionIndex,
       questionResultList: [],
@@ -65,4 +61,8 @@ const createLeaderBoard = async (roomId, platerResultList) => {
     });
   });
   return leaderBoard.save();
+};
+
+module.exports = {
+  createLeaderBoard,
 };
