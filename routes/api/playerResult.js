@@ -22,7 +22,7 @@ router.get("/", async (req, res) => {
 // --POST-- create a new player result
 router.post("/", async (req, res) => {
   try {
-    console.log("api:   " + JSON.stringify(req.body));
+    // console.log("api:   " + JSON.stringify(req.body));
     const newPlayerResultN = await playerResultsModule.createPlayerResult(
       req.body.newPlayerResult.playerId,
       req.body.newPlayerResult.roomId,
@@ -46,7 +46,7 @@ router.get("/:id", async (req, res) => {
     const playerResultFound = await playerResultsModule.getPlayerResultById(
       req.params.id
     );
-    console.log("player result found: " + playerResultFound);
+    // console.log("player result found: " + playerResultFound);
     if (!playerResultFound)
       res.json({ message: "player result not found" }).status(401);
     else

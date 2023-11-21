@@ -62,7 +62,53 @@ const createLeaderBoard = async (roomId, gameData, platerResultList) => {
   });
   return leaderBoard.save();
 };
+const getLeaderBoardById = async (id) => {
+  return await LeaderBoard.find({ _id: id }).lean();
+};
+
+const updateLeaderboard = async (
+  oldLeaderboard,
+  questionIndex,
+  playerId,
+  playerPoints
+) => {
+  console.log(
+    "leaderBoard to update",
+    oldLeaderboard.questionLeaderboard[0]
+  );
+  oldLeaderboard.questionLeaderboard[
+    questionIndex - 1
+  ].questionResultList.push({
+    playerId,
+    playerPoints,
+  });
+  return await LeaderBoard.findByIdAndUpdate(
+    oldLeaderboard._id,
+    oldLeaderboard,
+    {
+      new: true,
+    }
+  );
+};
+
+const updateCurrentLeaderboard = async (
+  leaderboard,
+  questionIndex,
+  playerId,
+  playerCurrentScore
+) => {
+  leaderboard.currentLeaderboard[questionIndex - 1].leaderboardList.push({
+    playerId,
+    playerCurrentScore,
+  });
+  return await LeaderBoard.findByIdAndUpdate(leaderboard._id, leaderboard, {
+    new: true,
+  });
+};
 
 module.exports = {
   createLeaderBoard,
+  getLeaderBoardById,
+  updateLeaderboard,
+  updateCurrentLeaderboard,
 };

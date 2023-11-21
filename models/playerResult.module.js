@@ -126,13 +126,17 @@ const addAnswer = async (playerResult, game, newAnswer) => {
       correctAnswers,
       points,
     });
-    console.log("end reuslt" + JSON.stringify(playerResult));
+    // console.log("end reuslt" + JSON.stringify(playerResult));
     // return await playerResult.save(function (err) {
     //   console.log(err);
     // });
-    return PlayerResults.findByIdAndUpdate(playerResult._id, playerResult, {
-      new: true,
-    });
+    return await PlayerResults.findByIdAndUpdate(
+      playerResult._id,
+      playerResult,
+      {
+        new: true,
+      }
+    );
   }
 };
 

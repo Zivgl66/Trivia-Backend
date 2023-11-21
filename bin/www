@@ -16,7 +16,7 @@ let leaderboard;
 let players = [];
 
 const addPlayer = (user, socketId) => {
-  console.log(user);
+  console.log(chalk.bgGreen(user));
   !players.some((player) => player.socketId === socketId) &&
     players.push({
       guestId: user._id,
@@ -26,7 +26,7 @@ const addPlayer = (user, socketId) => {
     });
 };
 const getPlayer = (socketId) => {
-  return players.find((player) => player.socketId === socketId);
+  return players.find((player) => player.socketId == socketId);
 };
 /**
  * Get port from environment and store in Express.
@@ -46,27 +46,29 @@ connectToDb
         allowedHeaders: ["*"],
       },
     });
+
     io.on("connection", async (socket) => {
-      console.log("SOCKET SERVER CONNECTION");
+      console.log(chalk.bgGreen("SOCKET SERVER CONNECTION"));
       socket.on("disconnect", (reason) => {
-        console.log("Socket " + socket.id + " was disconnected");
-        console.log(reason);
+        console.log(chalk.bgGreen("Socket " + socket.id + " was disconnected"));
+        console.log(chalk.bgGreen(reason));
       });
 
       // start a game with host
       socket.on("init-game", (newRoom, newLeaderboard) => {
-        console.log("init game!!");
+        console.log(chalk.bgGreen("init game!!"));
         room = JSON.parse(JSON.stringify(newRoom));
         leaderboard = JSON.parse(JSON.stringify(newLeaderboard));
-        console.log("room: " + room);
-        // leaderboard = JSON.parse(JSON.stringify(newLeaderboard));
+        console.log(chalk.bgGreen("room: " + room));
         socket.join(room.roomCode);
         hostId = socket.id;
         console.log(
-          "Host with id " +
-            socket.id +
-            " started game and joined room: " +
-            room.roomCode
+          chalk.bgGreen(
+            "Host with id " +
+              socket.id +
+              " started game and joined room: " +
+              room.roomCode
+          )
         );
       });
 
@@ -76,12 +78,14 @@ connectToDb
         // cb("correct", user._id, room._id);
         socket.join(room.roomCode);
         console.log(
-          "player " +
-            user.guestName +
-            " with id " +
-            socket.id +
-            " joined room " +
-            room.roomCode
+          chalk.bgGreen(
+            "player " +
+              user.guestName +
+              " with id " +
+              socket.id +
+              " joined room " +
+              room.roomCode
+          )
         );
         let player = getPlayer(socketId);
         io.emit("player-added", player);
@@ -90,9 +94,10 @@ connectToDb
       // start the game for everybody connected to the socket
       socket.on("start-game", (game) => {
         game = JSON.parse(JSON.stringify(game));
-        console.log("Move players to game");
+        console.log(chalk.bgGreen("Move players to game"));
         socket.to(room.roomCode).emit("move-to-game-page", room._id);
       });
+
       socket.on("question-preview", (cb) => {
         cb();
         socket.to(room.roomCode).emit("host-start-preview");
@@ -104,9 +109,11 @@ connectToDb
       });
 
       socket.on("start-question-timer", (time, question, cb) => {
-        console.log(question);
+        // console.log(question);
         console.log(
-          "Send question " + question.questionIndex + " data to players"
+          chalk.bgGreen(
+            "Send question " + question.questionIndex + " data to players"
+          )
         );
         socket
           .to(room.roomCode)
@@ -116,6 +123,7 @@ connectToDb
 
       socket.on("send-answer-to-host", (data, score) => {
         let player = getPlayer(socket.id);
+        console.log(chalk.bgGreen("player sending result: " + player));
         socket
           .to(room.roomCode)
           .emit("get-answer-from-player", data, leaderboard._id, score, player);

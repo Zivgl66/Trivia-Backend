@@ -29,4 +29,55 @@ router.post("/", async (req, res) => {
   }
 });
 
+router.post("/:id/questionleaderboard", async (req, res) => {
+  const { id } = req.params;
+  const { questionIndex, playerId, playerPoints } = req.body.questionResult;
+  console.log(
+    "question index and stuff: ",
+    questionIndex,
+    playerId,
+    playerPoints
+  );
+  try {
+    let leaderboard = await leaderboardModule.getLeaderBoardById(id);
+    console.log("leaderboard found: ", leaderboard);
+    const newLeaderboard = await leaderboardModule.updateLeaderboard(
+      leaderboard[0],
+      questionIndex,
+      playerId,
+      playerPoints
+    );
+    res.json({
+      leaderboard: newLeaderboard,
+      message: "Leaderboard updated",
+      status: "success",
+    });
+  } catch (err) {
+    console.error("error updating question leaderboard: ", err);
+    res.json(err).status(401);
+  }
+});
+
+router.post("/:id/currentleaderboard", async (req, res) => {
+  const { id } = req.params;
+  const { questionIndex, playerId, playerCurrentScore } = req.body.result;
+  try {
+    let leaderboard = await leaderboardModule.getLeaderBoardById(id);
+    const newLeaderboard = await leaderboardModule.updateCurrentLeaderboard(
+      leaderboard[0],
+      questionIndex,
+      playerId,
+      playerCurrentScore
+    );
+    res.json({
+      leaderboard: newLeaderboard,
+      message: "Leaderboard updated",
+      status: "success",
+    });
+  } catch (err) {
+    console.error("error updating question leaderboard: ", err);
+    res.json(err).status(401);
+  }
+});
+
 module.exports = router;
