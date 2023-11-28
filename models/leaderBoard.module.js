@@ -72,10 +72,10 @@ const updateLeaderboard = async (
   playerId,
   playerPoints
 ) => {
-  console.log(
-    "leaderBoard to update",
-    oldLeaderboard.questionLeaderboard[0]
-  );
+  // console.log(
+  //   "leaderBoard to update",
+  //   oldLeaderboard.questionLeaderboard[0]
+  // );
   oldLeaderboard.questionLeaderboard[
     questionIndex - 1
   ].questionResultList.push({

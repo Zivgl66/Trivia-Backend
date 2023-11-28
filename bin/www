@@ -103,11 +103,6 @@ connectToDb
         socket.to(room.roomCode).emit("host-start-preview");
       });
 
-      socket.on("question-preview", (cb) => {
-        cb();
-        socket.to(room.roomCode).emit("host-start-preview");
-      });
-
       socket.on("start-question-timer", (time, question, cb) => {
         // console.log(question);
         console.log(
@@ -123,10 +118,17 @@ connectToDb
 
       socket.on("send-answer-to-host", (data, score) => {
         let player = getPlayer(socket.id);
-        console.log(chalk.bgGreen("player sending result: " + player));
+        console.log(
+          chalk.bgGreen("player sending result: " + player.guestName)
+        );
         socket
           .to(room.roomCode)
           .emit("get-answer-from-player", data, leaderboard._id, score, player);
+      });
+
+      socket.on("game-over", (data) => {
+        console.log(chalk.bgGreen("Game Over"));
+        socket.to(room.roomCode).emit("game is over", data);
       });
     });
 

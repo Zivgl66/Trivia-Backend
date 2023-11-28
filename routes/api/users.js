@@ -9,7 +9,7 @@ const usersModule = require("../../models/users.module");
 router.get("/allusers", async (req, res) => {
   try {
     const usersData = await usersModule.selectAllUsers();
-    console.log(usersData);
+    // console.log(usersData);
     if (usersData.length > 0) res.json(usersData).status(200);
     else {
       res.json({ message: "No users found" }).status(401);
@@ -64,11 +64,11 @@ router.post("/signup", async (req, res) => {
 router.post("/login", async (req, res) => {
   try {
     const validatedValue = await usersValidation.validateLoginSchema(req.body);
-    console.log("validate value: " + validatedValue);
+    // console.log("validate value: " + validatedValue);
     const usersData = await usersModule.selectUserByUsername(
       validatedValue.username
     );
-    console.log("user: ", usersData);
+    // console.log("user: ", usersData);
     if (!usersData) {
       res.json({ message: "invalid email or password" }).status(401);
     } else {
@@ -91,7 +91,7 @@ router.post("/login", async (req, res) => {
           },
           "14d"
         );
-        console.log("token: ", token);
+        // console.log("token: ", token);
         res
           .json({
             token: token,
@@ -109,7 +109,7 @@ router.post("/loginbytoken", async (req, res) => {
   try {
     if (req.body.token) {
       let dataFromToken = await jwt.verifyToken(req.body.token);
-      console.log(dataFromToken);
+      // console.log(dataFromToken);
       const usersData = await usersModule.selectUserByEmail(
         dataFromToken.email
       );
@@ -128,9 +128,9 @@ router.post("/loginbytoken", async (req, res) => {
 
 router.post("/deleteuser/:id", adminMiddelaware, async (req, res) => {
   try {
-    console.log(req.params.id);
+    // console.log(req.params.id);
     let deleted = await usersModule.deleteUserById(req.params.id);
-    console.log(deleted);
+    // console.log(deleted);
     if (deleted) {
       res
         .json({ message: `deleted the user, ${deleted.username} from DB` })

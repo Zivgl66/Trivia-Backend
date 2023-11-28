@@ -17,6 +17,5 @@ app.use(express.static(path.join(__dirname, "public")));
 
 // http://localhost:3001/api
 app.use("/api", apiRouter);
-
-
+ 
 module.exports = app;

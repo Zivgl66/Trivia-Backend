@@ -43,7 +43,7 @@ router.post("/", async (req, res) => {
 //--GET-- get a player result by id
 router.get("/:id", async (req, res) => {
   try {
-    const playerResultFound = await playerResultsModule.getPlayerResultById(
+    const playerResultFound = await playerResultsModule.getPlayerResult(
       req.params.id
     );
     // console.log("player result found: " + playerResultFound);

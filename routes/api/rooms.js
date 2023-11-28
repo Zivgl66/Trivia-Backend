@@ -20,7 +20,7 @@ router.get("/", async (req, res) => {
 // --POST-- request crates a new room with the provided host id and game id
 router.post("/", async (req, res) => {
   try {
-    console.log("req" + req.body);
+    // console.log("req" + req.body);
     const randomCode = await roomsModule.createRoomCode();
     const room = {
       hostId: req.body.hostId,
@@ -54,7 +54,7 @@ router.post("/", async (req, res) => {
 router.post("/enterroom", async (req, res) => {
   try {
     const roomData = await roomsModule.findRoomByRoomCode(req.body.roomCode);
-    console.log("room data: ", roomData);
+    // console.log("room data: ", roomData);
     if (!roomData) {
       res.json({ message: "Room doesnt exists" }).status(401);
     } else {
@@ -63,7 +63,7 @@ router.post("/enterroom", async (req, res) => {
         roomData.roomCode,
         req.body
       );
-      console.log("added user" + room);
+      // console.log("added user" + room);
       res.json({
         status: "success",
         message: `guest has Enterd Room`,

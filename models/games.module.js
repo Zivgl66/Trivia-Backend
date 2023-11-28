@@ -18,7 +18,7 @@ const gamesSchema = new Schema({
     {
       questionType: {
         type: String,
-        enum: ["Options", "FreeText"],
+        enum: ["Options", "FreeText", "True/False"],
         required: true,
       },
       isManagerFirst: {
@@ -30,11 +30,11 @@ const gamesSchema = new Schema({
       //   enum: ["Standard", "Double", "BasedOnTime"],
       //   required: true,
       // },
-      // answerTime: {
-      //   type: Number,
-      //   min: 5,
-      //   max: 90,
-      // },
+      answerTime: {
+        type: Number,
+        min: 5,
+        max: 90,
+      },
       backgroundImage: { type: String, required: false },
       video: { type: String, required: false },
       question: {
@@ -69,7 +69,7 @@ const createGame = async (
   questionList,
   numberOfQuestions
 ) => {
-  console.log("question list: " + name);
+  // console.log("question list: " + name);
   const game = new Games({
     name,
     description,

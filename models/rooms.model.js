@@ -74,7 +74,7 @@ const checkIfRoomIsLive = async (id) => {
 const addUserToTheRoom = async (roomCode, userId) => {
   const room = await Rooms.findOne({ roomCode });
   room.playersList.push({ guestName: "", guestPicture: "" });
-  console.log(room);
+  // console.log(room);
   return await room.save();
 };
 

@@ -32,15 +32,15 @@ router.post("/", async (req, res) => {
 router.post("/:id/questionleaderboard", async (req, res) => {
   const { id } = req.params;
   const { questionIndex, playerId, playerPoints } = req.body.questionResult;
-  console.log(
-    "question index and stuff: ",
-    questionIndex,
-    playerId,
-    playerPoints
-  );
+  // console.log(
+  //   "question index and stuff: ",
+  //   questionIndex,
+  //   playerId,
+  //   playerPoints
+  // );
   try {
     let leaderboard = await leaderboardModule.getLeaderBoardById(id);
-    console.log("leaderboard found: ", leaderboard);
+    // console.log("leaderboard found: ", leaderboard);
     const newLeaderboard = await leaderboardModule.updateLeaderboard(
       leaderboard[0],
       questionIndex,
